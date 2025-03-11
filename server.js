@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static('public')); // Serve static files from the 'public' folder
 
 // Connect to MongoDB Atlas (free tier)
-mongoose.connect('mongodb+srv://sudhirvoleti:YsIy1KW8KhrPQTSC@cluster0.mongodb.net/greenleaf?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -27,6 +27,11 @@ app.post('/submit', async (req, res) => {
     const newContact = new Contact({ name, email, message });
     await newContact.save();
     res.send('Thank you for contacting us!');
+});
+
+// Explicitly handle the root route
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 // Start the server
